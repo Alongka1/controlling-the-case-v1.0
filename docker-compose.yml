@@ -1,0 +1,54 @@
+version: '3.8'
+services:
+
+  #web:
+    #build: ./web/
+    #ports:
+      #- "3000:3000"
+    #networks:
+      #- mynetwork
+
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sample
+      MYSQL_USER: alongka
+      MYSQL_PASSWORD: alongka
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - mynetwork
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+    ports:
+      - "3003:80"
+    networks:
+      - mynetwork
+
+  #api:
+    #build: ./api/
+    #depends_on:
+      #- db
+    #environment:
+      #DB_HOST: db
+      #DB_DATABASE: sample
+      #DB_USER: alongka
+      #DB_PASSWORD: alongka
+    #ports:
+      #- "3001:3001"
+    #restart: always
+    #networks:
+      #- mynetwork
+    
+networks:
+  mynetwork:
+    driver: bridge
